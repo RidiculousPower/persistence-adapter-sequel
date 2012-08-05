@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "persistence"
   s.add_development_dependency "sequel"
+  s.add_development_dependency "pkondzior-sequel_nested_set"
   s.add_development_dependency "pg"
-  s.add_development_dependency "development" 
+  s.add_development_dependency "development"
   # s.add_runtime_dependency "rest-client"
 end

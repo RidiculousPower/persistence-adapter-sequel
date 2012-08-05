@@ -2,6 +2,8 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
   include ::Persistence::Adapter::Abstract::EnableDisable
   
+  attr_reader :db
+
   ################
   #  initialize  #
   ################
@@ -10,7 +12,7 @@ module ::Persistence::Adapter::Sql::AdapterInterface
   # For now replicate Sequel call. See public method Sequel.connect().
   #
   def initialize( connection_string, connection_options = {} )
-  
+
     #Calling super would be inappropriate here 
     @connection_string = connection_string
     @connection_options = connection_options
@@ -27,7 +29,15 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
     super
     # Connect to an in-memorry database
-    @DB = ::Sequel.connect(@connection_string, @connection_options)
+    @db = ::Sequel.connect(@connection_string, @connection_options)
+    
+
+    # holds global ID => primary bucket
+    @db.create_table?(:PrimaryBucketForID) do
+      primary_key :id
+      String :name, :unique => true, :null => false
+    end
+    @database__primary_bucket_for_id = @db[:PrimaryBucketForID]
 
     return self
 
@@ -41,7 +51,7 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
     super
 
-    @DB.disconnect
+    @db.disconnect
     
     return self
 
@@ -56,7 +66,7 @@ module ::Persistence::Adapter::Sql::AdapterInterface
     bucket_instance = nil
 
     unless bucket_instance = @buckets[ bucket_name ]
-      #bucket_instance = ::Persistence::Adapter::Sql::Bucket.new( self, bucket_name )
+      bucket_instance = ::Persistence::Adapter::Sql::Bucket.new(self, bucket_name )
       @buckets[ bucket_name ] = bucket_instance
     end
 
@@ -126,12 +136,11 @@ module ::Persistence::Adapter::Sql::AdapterInterface
     unless object.persistence_id
 
       # we only store one sequence so we don't need a key; increment it by 1
-      global_id = @database__id_sequence.increment( :sequence, 1, -1 )
-
       # and write it to our global object database with a bucket/key struct as data
-      @database__primary_bucket_for_id.set( global_id, object.persistence_bucket.name )
+      name = object.persistence_bucket.name.to_s
+      @database__primary_bucket_for_id.insert(:name => name)
 
-      object.persistence_id = global_id
+      object.persistence_id = @database__primary_bucket_for_id.where(:name => name).get(:id)
 
     end
 

@@ -1,6 +1,6 @@
 
-class ::Persistence::Adapter::KyotoCabinet::Bucket::Index
+class ::Persistence::Adapter::Sql::Bucket::Index
 
-  include ::Persistence::Adapter::KyotoCabinet::Bucket::Index::IndexInterface
+  include ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
 end

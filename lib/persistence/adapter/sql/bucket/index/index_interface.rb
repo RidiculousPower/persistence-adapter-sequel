@@ -1,8 +1,8 @@
 
 
-module ::Persistence::Adapter::KyotoCabinet::Bucket::Index::IndexInterface
+module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
-  include ::Persistence::Adapter::KyotoCabinet::DatabaseSupport
+  #include ::Persistence::Adapter::Sql::DatabaseSupport
 
   ################
   #  initialize  #

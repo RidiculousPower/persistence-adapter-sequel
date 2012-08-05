@@ -3,8 +3,9 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
   include ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString
 
+  ## Consider using nested sets
   #include ::Persistence::Adapter::KyotoCabinet::DatabaseSupport
-
+  #acts_as_nested_set
   attr_accessor :parent_adapter, :name
 
   # we're always opening as writers and creating the files if they don't exist
@@ -14,35 +15,38 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   ################
   
   def initialize( parent_adapter, bucket_name )
-    
+      
     @parent_adapter = parent_adapter
-    @name = bucket_name
-
-    # storage for index objects
-    @indexes = { }
-
-    database_flags = @parent_adapter.class::DatabaseFlags
-
+    @name = bucket_name.class.name
+    
     # bucket database corresponding to self - holds properties
     # 
     # objectID             => klass
     # objectID.property_A  => property_value_A
     # objectID.property_B  => property_value_B
-    # 
-    @database__bucket = ::KyotoCabinet::DB.new
-    @database__bucket.open( file__bucket_database( bucket_name ), database_flags )
-
+    #
+    parent_adapter.db.create_table?(bucket_name) do
+      Integer :object_id, :primary_key=>true #Will not autoincrement. 
+      String  :klass
+    end
+    @database__bucket = parent_adapter.db[bucket_name]
+  
     # holds IDs that are presently in this bucket so we can iterate objects normally
     # 
     # objectID => objectID
     #
-    @database__ids_in_bucket = ::KyotoCabinet::DB.new
-    @database__ids_in_bucket.open( file__ids_in_bucket_database( bucket_name ), database_flags )
+    parent_adapter.db.create_table?(table__ids_in_bucket_database) do #non symbol error here
+      Integer :id, :primary_key=>true #Will not autoincrement. 
+      Integer :object_id
+    end
+    #Table naming scheme brakes dataset
+    @database__ids_in_bucket = parent_adapter.db[table__ids_in_bucket_database]
     
     # holds whether each index permits duplicates
-    @database__index_permits_duplicates = ::KyotoCabinet::DB.new
-    @database__index_permits_duplicates.open( file__index_permits_duplicates_database( bucket_name ), database_flags )
-
+    parent_adapter.db.create_table?(table__index_permits_duplicates_database) do
+      TrueClass :duplicate #Maps to boolean
+    end
+    @database__index_permits_duplicates = parent_adapter.db[table__index_permits_duplicates_database]
   end
 
   ###########
@@ -86,19 +90,17 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   ############
 
   def cursor
-    return ::Persistence::Adapter::KyotoCabinet::Cursor.new( self, nil, @database__ids_in_bucket.cursor )
+    return ::Persistence::Adapter::Sql::Cursor.new( self, nil, @database__ids_in_bucket.cursor )
   end
 
   #########################
   #  permits_duplicates?  #
   #########################
   
-  def permits_duplicates?( index )
+  def permits_duplicates?()
 
-    permits_duplicates = @database__index_permits_duplicates.get( index )
-    permits_duplicates = ( permits_duplicates == 1 ? true : false ) unless permits_duplicates.nil?
-
-    return permits_duplicates
+    #currently no
+    return false
 
   end
 
@@ -112,10 +114,10 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
     
     # insert object class definition: ID => klass
     # class definition is used as header/placeholder for object properties
-    @database__bucket.set( object.persistence_id, object.class.to_s )
+    @database__bucket.insert( :object_id => object.persistence_id, :klass => object.class.to_s )
 
     # insert ID to cursor index
-    @database__ids_in_bucket.set( object.persistence_id, object.persistence_id )
+    @database__ids_in_bucket.insert( :id => object.persistence_id, :object_id => object.persistence_id ) #not so sure about this line...
 
     # insert properties
     object.persistence_hash_to_port.each do |primary_key, attribute_value|
@@ -133,7 +135,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def get_object( global_id )
 
     object_persistence_hash = { }
-
+=begin
     # create cursor and set to position of ID
     @database__bucket.cursor_process do |object_cursor|
 
@@ -145,7 +147,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
           serialized_value = object_cursor.get_value
 
-          value = @parent_adapter.class::SerializationClass.__send__(  @parent_adapter.class::UnserializationMethod, serialized_value )
+          #value = @parent_adapter.class::SerializationClass.__send__(  @parent_adapter.class::UnserializationMethod, serialized_value )
                     
           object_persistence_hash[ this_attribute ] = value
 
@@ -154,7 +156,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
       end
 
     end
-
+=end
     return object_persistence_hash.empty? ? nil : object_persistence_hash
     
   end
@@ -358,37 +360,23 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
   end
 
-  ###########################
-  #  file__bucket_database  #
-  ###########################
-
-  def file__bucket_database( bucket_name )
-    
-    return File.join( @parent_adapter.home_directory,
-                      bucket_name.to_s + extension__bucket_database )
-
-  end
-
   ##################################
-  #  file__ids_in_bucket_database  #
+  #  table__ids_in_bucket_database  #
   ##################################
 
-  def file__ids_in_bucket_database( bucket_name )
+  def table__ids_in_bucket_database()
 
-    return File.join( @parent_adapter.home_directory,
-                      bucket_name.to_s + '__ids_in_bucket__' + extension__ids_in_bucket_database )
+    return (@name.to_s + 'idsinbucket').to_sym
 
   end  
 
   #############################################
-  #  file__index_permits_duplicates_database  #
+  #  table__index_permits_duplicates_database  #
   #############################################
 
-  def file__index_permits_duplicates_database( bucket_name )
+  def table__index_permits_duplicates_database()
     
-    index_file_name = bucket_name.to_s + '__index_permits_duplicates__' + extension__index_permits_duplicates_database
-    
-    return File.join( @parent_adapter.home_directory, index_file_name )
+    return (@name.to_s + '_index_permits_duplicates').to_sym
 
   end
 

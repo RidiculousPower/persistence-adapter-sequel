@@ -3,7 +3,13 @@ basepath = 'sql'
 
 files = [
 
-  'adapter_interface'
+  'adapter_interface',
+  
+  #'bucket/index/index_interface',
+  #'bucket/index',
+
+  'bucket/bucket_interface',
+  'bucket'
   
 ]
 
