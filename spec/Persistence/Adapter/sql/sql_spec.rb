@@ -8,7 +8,7 @@ describe ::Persistence::Adapter::Sql do
   $__persistence__spec__adapter__ = ::Persistence::Adapter::Sql.new( :adapter=>:postgres, :database=> :test )
 
   after do
-    [:table1, :table2].each{|x| Sequel::Model.db.from(x).truncate}
+    $__persistence__spec__adapter__.transaction(:rollback=>:always)
   end
   
   # adapter spec

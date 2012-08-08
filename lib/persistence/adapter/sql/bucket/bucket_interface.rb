@@ -17,7 +17,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def initialize( parent_adapter, bucket_name )
       
     @parent_adapter = parent_adapter
-    @name = bucket_name.class.name
+    @name = bucket_name
     
     # bucket database corresponding to self - holds properties
     # 
@@ -26,8 +26,9 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
     # objectID.property_B  => property_value_B
     #
     parent_adapter.db.create_table?(bucket_name) do
-      Integer :object_id, :primary_key=>true #Will not autoincrement. 
-      String  :klass
+      Integer :global_id
+      Text    :key   #key
+      Text    :value  #value
     end
     @database__bucket = parent_adapter.db[bucket_name]
   
@@ -35,15 +36,15 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
     # 
     # objectID => objectID
     #
-    parent_adapter.db.create_table?(table__ids_in_bucket_database) do #non symbol error here
-      Integer :id, :primary_key=>true #Will not autoincrement. 
-      Integer :object_id
+    parent_adapter.db.create_table?(table__ids_in_bucket_database) do
+      Integer :global_id
     end
-    #Table naming scheme brakes dataset
     @database__ids_in_bucket = parent_adapter.db[table__ids_in_bucket_database]
     
     # holds whether each index permits duplicates
     parent_adapter.db.create_table?(table__index_permits_duplicates_database) do
+      String :bucket_name
+      String :index_name
       TrueClass :duplicate #Maps to boolean
     end
     @database__index_permits_duplicates = parent_adapter.db[table__index_permits_duplicates_database]
@@ -99,8 +100,8 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   
   def permits_duplicates?()
 
-    #currently no
-    return false
+    
+    return nil
 
   end
 
@@ -110,18 +111,16 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   
   def put_object!( object )
     
+    #Be sure that the object has a truely unique id.
     @parent_adapter.ensure_object_has_globally_unique_id( object )
-    
-    # insert object class definition: ID => klass
-    # class definition is used as header/placeholder for object properties
-    @database__bucket.insert( :object_id => object.persistence_id, :klass => object.class.to_s )
 
     # insert ID to cursor index
-    @database__ids_in_bucket.insert( :id => object.persistence_id, :object_id => object.persistence_id ) #not so sure about this line...
+    @database__ids_in_bucket.insert(:global_id => object.persistence_id ) unless @database__ids_in_bucket.get(:global_id => object.persistence_id)#not so sure about this line...
 
+    @database__bucket.insert(:global_id => object.persistence_id, :key => :klass.to_s, :value => Marshal::dump(object.class))
     # insert properties
     object.persistence_hash_to_port.each do |primary_key, attribute_value|
-      put_attribute!( object.persistence_id, primary_key, attribute_value )
+      put_attribute!(  object, primary_key.to_sym, attribute_value )
     end
     
     return object.persistence_id
@@ -135,28 +134,22 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def get_object( global_id )
 
     object_persistence_hash = { }
-=begin
-    # create cursor and set to position of ID
-    @database__bucket.cursor_process do |object_cursor|
 
-      if object_cursor.jump( global_id )
+    # create sub dataset of all column with ID
+    # First record (ID only, no attribute) points to klass, so exclude it from listed records.
+    object_properties = @database__bucket.where(:global_id => global_id).exclude(:key => :klass.to_s).all 
+        # Iterate until dataset is empty.
 
-        # Iterate until the key no longer begins with ID
-        # First record (ID only, no attribute) points to klass, so we have to move forward to start.
-        while this_attribute = next_attribute_of_this_object( object_cursor, global_id )
+    unless object_properties.nil?
 
-          serialized_value = object_cursor.get_value
-
-          #value = @parent_adapter.class::SerializationClass.__send__(  @parent_adapter.class::UnserializationMethod, serialized_value )
-                    
-          object_persistence_hash[ this_attribute ] = value
-
-        end
-      
+      object_properties.each do |row|
+        
+          object_persistence_hash[ row[:key] ] = Marshal::load(row[:value]) unless row[:key].nil?
+          
       end
 
     end
-=end
+
     return object_persistence_hash.empty? ? nil : object_persistence_hash
     
   end
@@ -168,28 +161,10 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def delete_object!( global_id )
 
     # delete from IDs in bucket database
-    @database__ids_in_bucket.remove( global_id )
+    @database__ids_in_bucket.where(:global_id => global_id ).delete
 
-    # create cursor and set to position of ID
-    @database__bucket.cursor_process do |object_cursor|
-
-      if object_cursor.jump( global_id )
-        
-        object_cursor.remove
-        
-        # Iterate until the key no longer begins with ID
-        # First record (ID only, no attribute) points to klass, so we have to move forward to start.
-        while this_attribute = next_attribute_of_this_object( object_cursor, global_id )
-
-          this_attribute_value = object_cursor.get_value
-
-          object_cursor.remove
-        
-        end
-      
-      end
-
-    end
+    # delete all rows with ID in bucket database
+    @database__bucket.where(:global_id => global_id ).delete
   
   end
   
@@ -197,13 +172,9 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   #  put_attribute!  #
   ####################
   
-  def put_attribute!( global_id, attribute_name, value )
-    
-    serialization_class = @parent_adapter.class::SerializationClass
-    
-    serialized_value  = serialization_class.__send__( @parent_adapter.class::SerializationMethod, value )
+  def put_attribute!(object, attribute_name, value )
 
-    @database__bucket.set( attribute_name, serialized_value )
+    @database__bucket.insert(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
 
   end
 
@@ -211,15 +182,13 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   #  get_attribute  #
   ###################
   
-  def get_attribute( global_id, attribute_name )
+  def get_attribute( object, attribute_name )
 
     value = nil
 
-    if serialized_value = @database__bucket.get( attribute_name )
+    if serialized_value = @database__bucket.where(:global_id => object.persistence_id, :key => attribute_name.to_s).get(:value)
 
-      serialization_class = @parent_adapter.class::SerializationClass
-
-      value = serialization_class.__send__( @parent_adapter.class::UnserializationMethod, serialized_value )
+      value = Marshal::load(serialized_value )
 
     end
 
@@ -231,10 +200,10 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   #  delete_attribute!  #
   #######################
   
-  def delete_attribute!( global_id, attribute_name )
+  def delete_attribute!( object, attribute_name )
 
     # delete primary info on attribute
-    @database__bucket.remove( attribute_name )
+    @database__bucket.where(:global_id => object.persistence_id, :key => attribute_name ).delete
 
   end
 
@@ -309,17 +278,13 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def get_class( global_id )
     
     klass = nil
-    
-    if klass_path_string = @database__bucket.get( global_id )
-    
-      klass_path_parts = klass_path_string.split( '::' )
 
-      klass = klass_path_parts.inject( Object ) do |object_container_namespace, next_path_part|
-        object_container_namespace.const_get( next_path_part )
-      end
-    
+    if klass_serilized_name = @database__bucket.where( :global_id => global_id.to_s, :key => :klass.to_s ).get(:value)
+      
+      klass = Marshal::load(klass_serilized_name)
+          
     end
-    
+ 
     return klass
     
   end
@@ -330,7 +295,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
   def delete_class( global_id )
     
-    @database__bucket.remove( global_id )
+    @database__bucket.( global_id ).delete
 
   end
   
@@ -338,35 +303,13 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
       private ######################################################################################
   ##################################################################################################
 
-  ###################################
-  #  next_attribute_of_this_object  #
-  ###################################
-
-  def next_attribute_of_this_object( object_cursor, global_id )
-    
-    attribute_name = nil
-
-    if object_cursor.step and primary_key = object_cursor.get_key
-
-      this_global_id, this_attribute = primary_key.split( @parent_adapter.class::Delimiter )
-    
-      if this_global_id.to_i == global_id
-        attribute_name = this_attribute.to_sym
-      end
-    
-    end
-    
-    return attribute_name
-
-  end
-
   ##################################
   #  table__ids_in_bucket_database  #
   ##################################
 
   def table__ids_in_bucket_database()
 
-    return (@name.to_s + 'idsinbucket').to_sym
+    return (@name.to_s + '_ids_in_bucket').to_sym
 
   end  
 
