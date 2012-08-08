@@ -15,9 +15,11 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   ################
   
   def initialize( parent_adapter, bucket_name )
+    
+    @indexes = {}
       
     @parent_adapter = parent_adapter
-    @name = bucket_name
+    @name = bucket_name.to_s
     
     # bucket database corresponding to self - holds properties
     # 
@@ -43,7 +45,6 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
     
     # holds whether each index permits duplicates
     parent_adapter.db.create_table?(table__index_permits_duplicates_database) do
-      String :bucket_name
       String :index_name
       TrueClass :duplicate #Maps to boolean
     end
@@ -98,10 +99,11 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   #  permits_duplicates?  #
   #########################
   
-  def permits_duplicates?()
+  def permits_duplicates?( index )
 
+    permits_duplicates = nil#@database__index_permits_duplicates.fetch("SELECT #{@database__index_permits_duplicates.filter(:index_name => index).exists}").single_value #there maybe a better way
     
-    return nil
+    return permits_duplicates
 
   end
 
@@ -222,7 +224,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
     else
 
-      @database__index_permits_duplicates.set( index_name, permits_duplicates )
+      @database__index_permits_duplicates.insert(:index_name => index_name.to_s, :duplicate => permits_duplicates )
 
     end
 
@@ -252,8 +254,8 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   
   def delete_index( index_name )
 
-    # remove permits_duplicates configuration
-    @database__index_permits_duplicates.remove( index_name )
+    # remove index table
+    @parent_adapter.db.drop_table?(index_name)
 
     index_instance = @indexes.delete( index_name )
     

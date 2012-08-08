@@ -2,8 +2,6 @@
 
 module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
-  #include ::Persistence::Adapter::Sql::DatabaseSupport
-
   ################
   #  initialize  #
   ################
@@ -19,13 +17,17 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
     # get path info for index databases
     bucket_name    = @bucket_name
 
-    @database__index = ::KyotoCabinet::DB.new
-    @database__index.open( file__index_database( bucket_name, index_name ), 
-                           parent_bucket.parent_adapter.class::DatabaseFlags )
+    parent_bucket.parent_adapter.db.create_table?(table__index_database) do
+      Integer :global_id
+      Text :key
+    end
+    @database__index = parent_bucket.parent_adapter.db[table__index_database]
 
-    @database__reverse_index = ::KyotoCabinet::DB.new
-    @database__reverse_index.open( file__reverse_index_database( bucket_name, index_name ), 
-                                   parent_bucket.parent_adapter.class::DatabaseFlags )
+    parent_bucket.parent_adapter.db.create_table?(file__reverse_index_database) do
+      Integer :global_id
+      Text :key
+    end
+    @database__reverse_index = parent_bucket.parent_adapter.db[file__reverse_index_database]
 
   end
 
@@ -56,11 +58,12 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
   
   def delete
     
-    # remove reverse index
-    File.delete( @database__reverse_index.path )
+    # remove index    
+    @database__index.delete
+        
+    @database__reverse_index.delete
 
-    # remove index
-    File.delete( @database__index.path )
+
     
   end
   
@@ -70,8 +73,8 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
   def cursor
 
-    return ::Persistence::Adapter::KyotoCabinet::Cursor.new( @parent_bucket, self, @database__index.cursor )
-
+    #return ::Persistence::Adapter::KyotoCabinet::Cursor.new( @parent_bucket, self, @database__index.cursor )
+    raise "Sql does not uses cursors"
   end
 
   #########################
@@ -90,9 +93,9 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
   def get_object_id( key )
 
-    serialized_index_key = @parent_bucket.parent_adapter.class::SerializationClass.__send__( @parent_bucket.parent_adapter.class::SerializationMethod, key )
+    serialized_index_key = Marshal::dump( key.to_s )
 
-    global_id = @database__index.get( serialized_index_key )
+    global_id = @database__index.where(:key => serialized_index_key ).get(:global_id)
     
     return global_id ? global_id.to_i : nil
 
@@ -103,12 +106,11 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
   #####################
 
   def index_object_id( global_id, key )
-
-    serialized_index_key = @parent_bucket.parent_adapter.class::SerializationClass.__send__( @parent_bucket.parent_adapter.class::SerializationMethod, key )
-
+    serialized_index_key = Marshal::dump( key.to_s )
+    
     # we point to object.persistence_id rather than primary key because the object.persistence_id is the object header
-    @database__index.set( serialized_index_key, global_id )
-    @database__reverse_index.set( global_id, serialized_index_key )
+    @database__index.insert(:key => serialized_index_key, :global_id => global_id )
+    @database__reverse_index.insert( :global_id => global_id, :key => serialized_index_key )
 
   end
 
@@ -118,9 +120,9 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
 
   def delete_keys_for_object_id!( global_id )
 
-    serialized_key = @database__reverse_index.get( global_id )
-    @database__reverse_index.remove( global_id )
-    @database__index.remove( serialized_key )    
+    serialized_key = @database__reverse_index.where(:global_id => global_id ).get(:key)
+    @database__reverse_index.where(:global_id => global_id ).delete
+    @database__index.where(:key => serialized_key ).delete    
 
   end
 
@@ -129,14 +131,13 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
   ##################################################################################################
 
   ##########################
-  #  file__index_database  #
+  #  table_index_database  #
   ##########################
 
-  def file__index_database( bucket_name, index_name )
+  def table__index_database()
 
-    index_file_name = bucket_name.to_s + '__index_' + index_name.to_s + '__' + extension__bucket_index_database
 
-    return File.join( @parent_bucket.parent_adapter.home_directory, index_file_name )
+    return (@parent_bucket.name + '_index_' + @name.to_s).to_sym
 
   end
 
@@ -144,11 +145,9 @@ module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
   #  file__reverse_index_database  #
   ##################################
 
-  def file__reverse_index_database( bucket_name, index_name )
+  def file__reverse_index_database()
     
-    index_file_name = bucket_name.to_s + '__reverse_index_' + index_name.to_s + '__' + extension__bucket_index_database
-    
-    return File.join( @parent_bucket.parent_adapter.home_directory, index_file_name )
+    return (@parent_bucket.name + '_reverse_index_' + @name.to_s).to_sym
 
   end
 

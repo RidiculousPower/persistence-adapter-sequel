@@ -1,3 +1,4 @@
+begin ; require 'development' ; rescue ::LoadError ; end
 
 require 'persistence'
 

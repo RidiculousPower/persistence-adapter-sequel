@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["CMToups"]
   s.email       = ["CMToups@me.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = "Sql Adapter for Persistence"
+  s.description = "Currenly in dev"
 
   s.rubyforge_project = "persistence-adapter-sql"
 
@@ -20,10 +20,10 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_development_dependency "rspec"
-  s.add_development_dependency "persistence"
-  s.add_development_dependency "sequel"
+  s.add_dependency "persistence"
+  s.add_dependency "sequel"
   s.add_development_dependency "pkondzior-sequel_nested_set"
-  s.add_development_dependency "pg"
+  s.add_dependency "pg"
   s.add_development_dependency "development"
   s.add_development_dependency "gem-release"
   # s.add_runtime_dependency "rest-client"
