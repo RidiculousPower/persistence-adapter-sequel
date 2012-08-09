@@ -3,6 +3,8 @@ module ::Persistence::Adapter::Sql::AdapterInterface
   include ::Persistence::Adapter::Abstract::EnableDisable
   
   attr_reader :db
+  
+  Delimiter = '.'
 
   ################
   #  initialize  #
@@ -83,8 +85,6 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
     bucket_name = @database__primary_bucket_for_id.where(:global_id => global_id ).get(:bucket_name)
 
-    bucket_name = bucket_name if bucket_name
-
     return bucket_name.to_sym
 
   end
@@ -109,7 +109,9 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
   def delete_bucket_for_object_id( global_id )
 
-    return @database__primary_bucket_for_id.remove( global_id )
+    @database__primary_bucket_for_id.where(:global_id => global_id ).delete
+    
+    return self
 
   end
 
@@ -139,61 +141,16 @@ module ::Persistence::Adapter::Sql::AdapterInterface
 
       # we only store one sequence so we don't need a key; increment it by 1
       # and write it to our global object database with a bucket/key struct as data    
-      
-      # Currenly this is handled by sql autoincrementing primary keys
-      @database__primary_bucket_for_id.insert(:bucket_name => name)
 
-      object.persistence_id = @database__primary_bucket_for_id.where(:bucket_name => name).get(:global_id)
+      # Currenly this is handled by sql autoincrementing primary keys
+      # Covinatly Sequel returns the primary key on insert.
+      global_id = @database__primary_bucket_for_id.insert(:bucket_name => name)
+
+      object.persistence_id = global_id
 
     end
 
     return self
-
-  end
-
-  ##################################################################################################
-      private ######################################################################################
-  ##################################################################################################
-
-  ################################
-  #  file__id_sequence_database  #
-  ################################
-
-  def file__id_sequence_database
-
-    return File.join( home_directory,
-                      'IDSequence' + extension__id_sequence_database )
-
-  end
-
-  ##########################################
-  #  file__primary_bucket_for_id_database  #
-  ##########################################
-
-  def file__primary_bucket_for_id_database
-
-    return File.join( home_directory,
-                      'PrimaryBucketForID' + extension__primary_bucket_for_id_database )
-
-  end
-
-  #####################################
-  #  extension__id_sequence_database  #
-  #####################################
-
-  def extension__id_sequence_database
-
-    return extension__database( :tree )
-
-  end
-
-  ###############################################
-  #  extension__primary_bucket_for_id_database  #
-  ###############################################
-
-  def extension__primary_bucket_for_id_database
-
-    return extension__database( :hash )
 
   end
 

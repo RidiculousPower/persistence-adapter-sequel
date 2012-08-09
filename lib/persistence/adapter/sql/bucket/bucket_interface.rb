@@ -22,8 +22,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
     @name = bucket_name.to_s
     
     # bucket database corresponding to self - holds properties
-    # 
-    # objectID             => klass
+    #     # objectID             => klass
     # objectID.property_A  => property_value_A
     # objectID.property_B  => property_value_B
     #
@@ -146,7 +145,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
       object_properties.each do |row|
         
-          object_persistence_hash[ row[:key] ] = Marshal::load(row[:value]) unless row[:key].nil?
+          object_persistence_hash[ primary_key_to_attribute_name( row[:key] ) ] = Marshal::load(row[:value]) unless row[:key].nil?
           
       end
 
@@ -177,7 +176,7 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
   def put_attribute!(object, attribute_name, value )
 
     @database__bucket.insert(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
-
+    
   end
 
   ###################
@@ -305,13 +304,26 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
       private ######################################################################################
   ##################################################################################################
 
+  ###################################
+  #  primary_key_to_property_name  #
+  ###################################
+
+  def primary_key_to_attribute_name( primary_key )
+
+
+    this_global_id, this_attribute = primary_key.split( @parent_adapter.class::Delimiter ) unless primary_key.nil?
+    
+    this_attribute.to_sym if this_attribute
+
+  end
+  
   ##################################
   #  table__ids_in_bucket_database  #
   ##################################
 
   def table__ids_in_bucket_database()
 
-    return (@name.to_s + '_ids_in_bucket').to_sym
+    (@name.to_s + '_ids_in_bucket').to_sym
 
   end  
 
@@ -321,48 +333,8 @@ module ::Persistence::Adapter::Sql::Bucket::BucketInterface
 
   def table__index_permits_duplicates_database()
     
-    return (@name.to_s + '_index_permits_duplicates').to_sym
+    (@name.to_s + '_index_permits_duplicates').to_sym
 
   end
 
-  ################################
-  #  extension__bucket_database  #
-  ################################
-
-  def extension__bucket_database
-    
-    return extension__database( :tree )
-
-  end
-
-  ###################################################
-  #  extension__indexes_permit_duplicates_database  #
-  ###################################################
-
-  def extension__indexes_permit_duplicates_database
-    
-    return extension__database( :hash )
-
-  end
-
-  #######################################
-  #  extension__ids_in_bucket_database  #
-  #######################################
-
-  def extension__ids_in_bucket_database
-    
-    return extension__database( :hash )
-
-  end
-
-  ##################################################
-  #  extension__index_permits_duplicates_database  #
-  ##################################################
-  
-  def extension__index_permits_duplicates_database
-
-    return extension__database( :hash )
-
-  end
-    
 end
