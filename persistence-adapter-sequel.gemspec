@@ -6,7 +6,7 @@ require "persistence/adapter/sequel/version"
 
 Gem::Specification.new do |s|
   s.name        = "persistence-adapter-sequel"
-  s.version     = Persistence::Adapter::Sequel::VERSION
+  s.version     =  0.0.2 #Persistence::Adapter::Sequel::VERSION
   s.authors     = ["CMToups"]
   s.email       = ["CMToups@me.com"]
   s.homepage    = ""
