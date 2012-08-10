@@ -1,5 +1,5 @@
 
-module ::Persistence::Adapter::Sql::Bucket::BucketInterface
+module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
 
   include ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString
 

@@ -1,5 +1,5 @@
 
-class ::Persistence::Adapter::Sql
+class ::Persistence::Adapter::Sequel
   class Cursor
   end
   class Bucket

@@ -1,6 +1,6 @@
 
 
-module ::Persistence::Adapter::Sql::Bucket::Index::IndexInterface
+module ::Persistence::Adapter::Sequel::Bucket::Index::IndexInterface
 
   ################
   #  initialize  #

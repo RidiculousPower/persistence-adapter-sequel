@@ -1,4 +1,4 @@
-module ::Persistence::Adapter::Sql::AdapterInterface
+module ::Persistence::Adapter::Sequel::AdapterInterface
 
   include ::Persistence::Adapter::Abstract::EnableDisable
   
@@ -68,7 +68,7 @@ module ::Persistence::Adapter::Sql::AdapterInterface
     bucket_instance = nil
 
     unless bucket_instance = @buckets[ bucket_name ]
-      bucket_instance = ::Persistence::Adapter::Sql::Bucket.new(self, bucket_name )
+      bucket_instance = ::Persistence::Adapter::Sequel::Bucket.new(self, bucket_name )
       @buckets[ bucket_name ] = bucket_instance
     end
 

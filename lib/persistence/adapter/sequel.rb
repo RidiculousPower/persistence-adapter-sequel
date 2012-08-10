@@ -10,8 +10,8 @@ require_relative './namespaces'
 # source file requires
 require_relative './requires.rb'
 
-class ::Persistence::Adapter::Sql
+class ::Persistence::Adapter::Sequel
   
-  include ::Persistence::Adapter::Sql::AdapterInterface
+  include ::Persistence::Adapter::Sequel::AdapterInterface
 
 end

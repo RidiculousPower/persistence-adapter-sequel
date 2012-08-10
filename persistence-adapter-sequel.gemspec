@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "persistence/adapter/sql/version"
+require "persistence/adapter/sequel/version"
 
 Gem::Specification.new do |s|
-  s.name        = "persistence-adapter-sql"
-  s.version     = Persistence::Adapter::Sql::VERSION
+  s.name        = "persistence-adapter-sequel"
+  s.version     = Persistence::Adapter::Sequel::VERSION
   s.authors     = ["CMToups"]
   s.email       = ["CMToups@me.com"]
   s.homepage    = ""
-  s.summary     = "Sql Adapter for Persistence"
+  s.summary     = "Sequel Adapter for Persistence"
   s.description = "Currenly in dev"
 
-  s.rubyforge_project = "persistence-adapter-sql"
+  s.rubyforge_project = "persistence-adapter-sequel"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -22,9 +22,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_dependency "persistence"
   s.add_dependency "sequel"
-  s.add_development_dependency "pkondzior-sequel_nested_set"
   s.add_dependency "pg"
-  s.add_development_dependency "development"
+  s.add__dependency "development"
   s.add_development_dependency "gem-release"
   # s.add_runtime_dependency "rest-client"
 end

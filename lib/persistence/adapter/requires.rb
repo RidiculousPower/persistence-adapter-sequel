@@ -1,5 +1,5 @@
 
-basepath = 'sql'
+basepath = 'sequel'
 
 files = [
 

@@ -1,11 +1,11 @@
 
-require_relative '../../../../lib/persistence/adapter/sql.rb'
+require_relative '../../../../lib/persistence/adapter/sequel.rb'
 
-describe ::Persistence::Adapter::Sql do
+describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sql.new( :adapter=>:postgres, :database=> :test )
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter=>:postgres, :database=> :test )
 
 #Curently not fuctionall, rollback configure must be done in persistence itself.
   RSpec.configure do |c|
