@@ -85,7 +85,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     bucket_name = @database__primary_bucket_for_id.where(:global_id => global_id ).get(:bucket_name)
 
-    return bucket_name.to_sym
+    return bucket_name.to_sym if bucket_name
 
   end
 
