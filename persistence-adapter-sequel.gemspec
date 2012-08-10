@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency "persistence"
   s.add_dependency "sequel"
   s.add_dependency "pg"
-  s.add__dependency "development"
+  s.add_dependency "development"
   s.add_development_dependency "gem-release"
   # s.add_runtime_dependency "rest-client"
 end
