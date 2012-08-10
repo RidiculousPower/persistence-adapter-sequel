@@ -41,7 +41,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
     end
     @database__primary_bucket_for_id = @db[:PrimaryBucketForID]
 
-    return self
+    self
 
   end
   
@@ -55,7 +55,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     @db.disconnect
     
-    return self
+    self
 
   end
   
@@ -72,7 +72,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
       @buckets[ bucket_name ] = bucket_instance
     end
 
-    return bucket_instance
+    bucket_instance
 
   end
   
@@ -85,7 +85,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     bucket_name = @database__primary_bucket_for_id.where(:global_id => global_id ).get(:bucket_name)
 
-    return bucket_name.to_sym if bucket_name
+    bucket_name.to_sym if bucket_name
 
   end
 
@@ -99,7 +99,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     bucket_instance = persistence_bucket( bucket_name )
 
-    return bucket_instance.get_class( global_id )
+    bucket_instance.get_class( global_id )
 
   end
 
@@ -111,7 +111,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     @database__primary_bucket_for_id.where(:global_id => global_id ).delete
     
-    return self
+    self
 
   end
 
@@ -125,7 +125,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     bucket_instance = persistence_bucket( bucket_name )
 
-    return bucket_instance.delete_class( global_id )
+    bucket_instance.delete_class( global_id )
 
   end
 
@@ -150,7 +150,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
 
     end
 
-    return self
+    self
 
   end
 
