@@ -56,7 +56,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   
   def count
     
-    return @database__ids_in_bucket.count
+    @database__ids_in_bucket.count
     
   end
   
@@ -91,7 +91,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   ############
 
   def cursor
-    return ::Persistence::Adapter::Sql::Cursor.new( self, nil, @database__ids_in_bucket.cursor )
+    ::Persistence::Adapter::Sql::Cursor.new( self, nil, @database__ids_in_bucket.cursor )
   end
 
   #########################
@@ -102,7 +102,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
 
     permits_duplicates = nil#@database__index_permits_duplicates.fetch("SELECT #{@database__index_permits_duplicates.filter(:index_name => index).exists}").single_value #there maybe a better way
     
-    return permits_duplicates
+    permits_duplicates
 
   end
 
@@ -124,7 +124,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
       put_attribute!(  object, primary_key.to_sym, attribute_value )
     end
     
-    return object.persistence_id
+    object.persistence_id
     
   end
   
@@ -151,7 +151,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
 
     end
 
-    return object_persistence_hash.empty? ? nil : object_persistence_hash
+    object_persistence_hash.empty? ? nil : object_persistence_hash
     
   end
   
@@ -193,7 +193,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
 
     end
 
-    return value
+    value
 
   end
   
@@ -233,7 +233,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
     # store index instance
     @indexes[ index_name ] = index_instance
 
-    return index_instance
+    index_instance
     
   end
 
@@ -243,7 +243,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   
   def index( index_name )
 
-    return @indexes[ index_name ]
+    @indexes[ index_name ]
 
   end
 
@@ -268,7 +268,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   
   def has_index?( index_name )
     
-    return @indexes.has_key?( index_name )
+    @indexes.has_key?( index_name )
 
   end
 
@@ -286,7 +286,7 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
           
     end
  
-    return klass
+    klass
     
   end
 
