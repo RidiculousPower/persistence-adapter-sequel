@@ -68,7 +68,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
     bucket_instance = nil
 
     unless bucket_instance = @buckets[ bucket_name ]
-      bucket_instance = ::Persistence::Adapter::Sequel::Bucket.new(self, bucket_name )
+      bucket_instance = ::Persistence::Adapter::Sequel::Bucket.new(self, bucket_name.to_sym )
       @buckets[ bucket_name ] = bucket_instance
     end
 
