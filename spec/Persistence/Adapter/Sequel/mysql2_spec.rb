@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter=>:mysql2, :database=> :test, :host => :localhost )
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => :mysql2, :database => :test)
 
   
   # adapter spec
