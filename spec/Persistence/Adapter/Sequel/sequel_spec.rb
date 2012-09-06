@@ -17,6 +17,6 @@ describe ::Persistence::Adapter::Sequel do
   end
   
   # adapter spec
-  require_relative File.join( ::Persistence::Adapter::Abstract.spec_location, 'Adapter_spec.rb' )
+  #require_relative File.join( ::Persistence::Adapter::Abstract.spec_location, 'Adapter_spec.rb' )
 
 end
