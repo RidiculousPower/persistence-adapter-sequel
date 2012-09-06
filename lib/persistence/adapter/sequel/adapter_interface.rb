@@ -142,7 +142,7 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
       # and write it to our global object database with a bucket/key struct as data    
 
       # Currenly this is handled by sql autoincrementing primary keys
-      # Covinatly Sequel returns the primary key on insert.
+      # Conveniently Sequel returns the primary key on insert.
       global_id = @database__primary_bucket_for_id.insert(:bucket_name => name)
 
       object.persistence_id = global_id
