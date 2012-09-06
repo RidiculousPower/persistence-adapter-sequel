@@ -28,11 +28,10 @@ module ::Persistence::Adapter::Sequel::AdapterInterface
   ############
 
   def enable
-
+  
     super
     # Connect to an in-memorry database
     @db = ::Sequel.connect(@connection_string, @connection_options)
-    
 
     # holds global ID => primary bucket
     @db.create_table?(:PrimaryBucketForID) do
