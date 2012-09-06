@@ -1,6 +1,6 @@
 # Sequel Persistence Adapter #
 
-* Rubygem page to be added when alfa development is complete!
+* Rubygem page to be added when alpha development is complete!
 
 # Summary #
 
@@ -33,7 +33,7 @@ The details connecting to the database will very. Note that `::Persistence::Adap
 At this point the list of tested sub adapters are:
 
 * Amalgalite
-* MySQl
+* MySQL
 * MySQL2
 * PostgreSQL
 * SQLite
