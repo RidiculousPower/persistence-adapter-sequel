@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite')
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :database => '/tmp/testing')
 
   
   # adapter spec
