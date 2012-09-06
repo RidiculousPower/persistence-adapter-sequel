@@ -3,11 +3,11 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
  
-require 'bundler/version'
+require "persistence/adapter/sequel/version"
  
 Gem::Specification.new do |s|
   s.name        = "persistence-adapter-sequel"
-  s.version     = '0.0.2' #Persistence::Adapter::Sequel::VERSION
+  s.version     = Persistence::Adapter::Sequel::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Conner M-Toups"]
   s.email       = ["cmtoups@me.com"]
