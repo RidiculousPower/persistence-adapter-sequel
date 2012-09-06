@@ -1,5 +1,7 @@
 # Sequel Persistence Adapter #
 
+* Rubygem page to be added when alfa development is complete!
+
 # Summary #
 
 
@@ -18,7 +20,7 @@ Currently only available on github:
 # Usage #
 
 The Sequel adapter is a Persistence wrapper for the Sequel gem. Using it requires specifying your method of connection to your database.
-At this point, only Postgresql has been tested.
+At this point, only PostgreSQL has been tested.
 
 ```ruby
 sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => :postgres, :database => :your_database_name )
