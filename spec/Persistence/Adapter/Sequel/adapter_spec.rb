@@ -4,13 +4,12 @@ require 'persistence/adapter/sequel'
 
 
 describe ::Persistence::Adapter do
-  
+
   before :all do
 
-    @adapter = ::Persistence::Adapter::Sequel.new( :adapter=>:postgres, :database=> :test ) || ::Persistence::Adapter::Mock.new( '/tmp/persistence_home' )
-
+    @adapter = ::Persistence::Adapter::Sequel.new( :adapter=>:postgres, :database=> :test, :host => 'localhost' )
     ::Persistence.enable_port( :mock, @adapter )
-
+    
     class ::Persistence::Adapter::MockObject
       include ::Persistence::Object::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -23,25 +22,10 @@ describe ::Persistence::Adapter do
     @object = ::Persistence::Adapter::MockObject.new
     @object.attribute = :some_value
 
-
     @bucket = @adapter.persistence_bucket( @object.persistence_bucket.name )    
 
   end
-  
-  after :all do
-    ["Persistence::Adapter::MockObject".to_sym, 
-      "Persistence::Adapter::MockObject_ids_in_bucket".to_sym,
-      "Persistence::Adapter::MockObject_index_duplicate_key".to_sym,
-      "Persistence::Adapter::MockObject_index_key".to_sym,
-      "Persistence::Adapter::MockObject_index_permits_duplicates".to_sym,
-      "Persistence::Adapter::MockObject_reverse_index_duplicate_key".to_sym,
-      "Persistence::Adapter::MockObject_reverse_index_key".to_sym,
-      "PrimaryBucketForID".to_sym,
-      "PrimaryBucketForID_global_id_seq".to_sym
-    ].each{|x| @adapter.db.from(x).delete}
-    ::Persistence.disable_port( :mock )
-  end
-  
+
   ################
   #  initialize  #
   #  enable      #
@@ -49,25 +33,14 @@ describe ::Persistence::Adapter do
   #  enabled?    #
   ################
 
-  describe ' # port' do
-    before :each  do
-     @port = @object.persistence_port
-    end
-    
-    it 'can initialize enabled state' do
-      @port.enabled?.should == true
-    end
-    
-    it 'can disable' do
-      @port.disable
-      @port.enabled?.should == false
-    end
-    
-    it 'can re-enable' do
-      @port.enable
-      @port.enabled?.should == true
-    end
-    
+  it ' # port can initialize enabled state, disable, re-enable' do
+	  @object.persistence_port.instance_eval do
+	      enabled?.should == true
+	      disable
+	      enabled?.should == false
+	      enable
+	      enabled?.should == true
+	  end
   end
 
   #################
