@@ -19,8 +19,7 @@ Currently only available on github:
 
 # Usage #
 
-The Sequel adapter is a Persistence wrapper for the Sequel gem. Using it requires specifying your method of connection to your database.
-At this point, only PostgreSQL has been tested.
+The Sequel adapter is a Persistence wrapper for the Sequel gem. Using it requires specifying your method of connection to your database as such:
 
 ```ruby
 sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => :postgres, :database => :your_database_name )
@@ -28,7 +27,56 @@ port_name = :sequel_port
 
 Persistence.enable_port( port_name, sequel_adapter )
 ```
-Note: `::Persistence::Adapter::Sequel.new(args & blocks)` works just like `Sequel.connect(args & blocks)` from the Sequel gem. For connection options see <a href="http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html">Sequel.connect</a>.
+
+The details connecting to the database will very. Note that `::Persistence::Adapter::Sequel.new(args & blocks)` works just like `Sequel.connect(args & blocks)` from the Sequel gem. For connection options see <a href="http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html">Sequel.connect</a>.
+
+At this point the list of tested sub adapters are:
+
+* Amalgalite
+
+In theory all Sequel adapters should work within Persistence but as of yet not all have been tested.
+
+To use Amalgalite:
+
+* Install the amalgalite gem
+
+* Add your adapter
+```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite', :database => 'your_database_file') ```
+
+To use MySQL:
+
+* Install the mysql gem
+
+* Add your adapter
+```ruby sequel_adapter =  ::Persistence::Adapter::Sequel.new( :adapter => 'mysql', :database => 'your_database', :user => 'your_user' )```
+
+To use MySQL2:
+
+* Install the mysql2 gem
+
+* Add your adapter
+```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql2', :database => 'your_database', :user => 'your_user')```
+
+To use PostgreSQl:
+
+* Install the pg gem
+
+* Add your adapter
+```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'postgres', :database => 'your_database', :user => 'your_user' )```
+
+To use SQLite:
+
+* Install the sqlite3 gem (Older gems not tested)
+
+* Add your adapter
+```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :database => 'your_database_file')```
+
+To use Swift:
+
+* Install a Swift gem (e.g. swift-db-sqlite3)
+
+* Add your adapter
+```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'swift', :db_type => 'your_database_type', :database => 'your_database')```
 
 # License #
 
