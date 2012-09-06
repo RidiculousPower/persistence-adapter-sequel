@@ -33,6 +33,11 @@ The details connecting to the database will very. Note that `::Persistence::Adap
 At this point the list of tested sub adapters are:
 
 * Amalgalite
+* MySQl
+* MySQL2
+* PostgreSQL
+* SQLite
+* Swift
 
 In theory all Sequel adapters should work within Persistence but as of yet not all have been tested.
 
