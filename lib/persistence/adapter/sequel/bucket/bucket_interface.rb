@@ -15,7 +15,8 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   ################
   
   def initialize( parent_adapter, bucket_name )
-    
+
+
     @indexes = {}
       
     @parent_adapter = parent_adapter
