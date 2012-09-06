@@ -64,7 +64,9 @@ To use MySQL2:
 * Install the mysql2 gem
 
 * Add your adapter
-```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql2', :database => 'your_database', :user => 'your_user')```
+```ruby 
+sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql2', :database => 'your_database', :user => 'your_user')
+```
 
 To use PostgreSQl:
 
