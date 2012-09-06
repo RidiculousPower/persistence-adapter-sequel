@@ -88,7 +88,7 @@ sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :data
 
 To use Swift:
 
-* Install the <a href="https://rubygems.org/gems/swift">swift</a> gem
+* Core swift gem not required
 
 * Install a Swift gem (e.g. <a href="https://rubygems.org/gems/swift-db-sqlite3">swift-db-sqlite3</a>)
 
