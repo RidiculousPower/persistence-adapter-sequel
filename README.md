@@ -46,14 +46,18 @@ To use Amalgalite:
 * Install the amalgalite gem
 
 * Add your adapter
-```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite', :database => 'your_database_file') ```
+```ruby 
+sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite', :database => 'your_database_file') 
+```
 
 To use MySQL:
 
 * Install the mysql gem
 
 * Add your adapter
-```ruby sequel_adapter =  ::Persistence::Adapter::Sequel.new( :adapter => 'mysql', :database => 'your_database', :user => 'your_user' )```
+```ruby 
+sequel_adapter =  ::Persistence::Adapter::Sequel.new( :adapter => 'mysql', :database => 'your_database', :user => 'your_user' )
+```
 
 To use MySQL2:
 
@@ -67,21 +71,27 @@ To use PostgreSQl:
 * Install the pg gem
 
 * Add your adapter
-```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'postgres', :database => 'your_database', :user => 'your_user' )```
+```ruby 
+sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'postgres', :database => 'your_database', :user => 'your_user' )
+```
 
 To use SQLite:
 
 * Install the sqlite3 gem (Older gems not tested)
 
 * Add your adapter
-```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :database => 'your_database_file')```
+```ruby 
+sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :database => 'your_database_file')
+```
 
 To use Swift:
 
 * Install a Swift gem (e.g. swift-db-sqlite3)
 
 * Add your adapter
-```ruby sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'swift', :db_type => 'your_database_type', :database => 'your_database')```
+```ruby 
+sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'swift', :db_type => 'your_database_type', :database => 'your_database')
+```
 
 # License #
 
