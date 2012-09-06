@@ -7,7 +7,7 @@ Adapter to use <a href="http://sequel.rubyforge.org">Sequel</a> as storage port 
 
 # Description #
 
-Implements necessary methods to run Persistence on top of Kyoto Cabinet.
+Implements necessary methods to run Persistence on top of Sequel.
 
 # Install #
 
