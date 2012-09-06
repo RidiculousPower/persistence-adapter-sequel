@@ -7,7 +7,7 @@ describe ::Persistence::Adapter do
   
   before :all do
 
-    @adapter = ::Persistence::Adapter::Sequel.new( :adapter=>:postgres, :database=> :test, :host => :localhost )
+    @adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'postgres', :database=> 'test', :host => 'localhost' )
 
     ::Persistence.enable_port( :mock, @adapter )
 
