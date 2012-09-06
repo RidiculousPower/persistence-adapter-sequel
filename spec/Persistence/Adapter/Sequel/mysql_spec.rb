@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 	#gem install mysqlplus -- --with-mysql-config=/usr/local/Cellar/mysql/5.1.51/bin/mysql_config
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => :mysql, :database => :test )
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql', :database => 'testing', :user => 'root' )
 
   
   # adapter spec
