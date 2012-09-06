@@ -20,12 +20,12 @@ Currently only available on github:
 The Sequel adapter is a Persistence wrapper for the Sequel gem. Using it requires specifying your method of connection to your database.
 At this point, only Postgresql has been tested.
 
-
+```
 sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter=>:postgres, :database=> :your_database_name )
 
 Persistence.enable_port( :sequel_port, sequel_adapter )
-
-Note: "::Persistence::Adapter::Sequel.new(`args & blocks`)" works just like Sequel.connect(`args & blocks`) from the Sequel gem. For connection options see <a href="http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html">Sequel.connect</a>.
+```
+Note: `::Persistence::Adapter::Sequel.new(args & blocks)` works just like `Sequel.connect(args & blocks)` from the Sequel gem. For connection options see <a href="http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html">Sequel.connect</a>.
 
 # License #
 
