@@ -3,7 +3,7 @@
 # Summary #
 
 
-Adapter to use <a href="http://fallabs.com/kyotocabinet/">KyotoCabinet</a> as storage port for <a href="https://rubygems.org/gems/persistence">Persistence</a> (<a href="https://github.com/RidiculousPower/persistence">on GitHub</a>).
+Adapter to use <a href="http://sequel.rubyforge.org">Sequel</a> as storage port for <a href="https://rubygems.org/gems/persistence">Persistence</a> (<a href="https://github.com/RidiculousPower/persistence">on GitHub</a>).
 
 # Description #
 
