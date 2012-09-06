@@ -4,7 +4,7 @@ require_relative '../../../../lib/persistence/adapter/sequel.rb'
 describe ::Persistence::Adapter::Sequel do
 
 
-  
+
   $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql2', :database => 'testing', :user => 'root')
 
   
