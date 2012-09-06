@@ -18,8 +18,7 @@ Gem::Specification.new do |s|
  #s.rubyforge_project = "persistence-adapter-sequel"
  
   s.add_dependency "persistence"
-  s.add_dependency "sequel"
-  s.add_dependency "pg"
+  s.add_dependency "sequel" 
   s.add_development_dependency "rspec"
   s.add_development_dependency "gem-release"
  
