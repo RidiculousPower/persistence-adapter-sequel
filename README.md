@@ -43,7 +43,7 @@ In theory all Sequel adapters should work within Persistence but as of yet not a
 
 To use Amalgalite:
 
-* Install the amalgalite gem
+* Install the <a href="https://rubygems.org/gems/amalgalite">amalgalite</a> gem
 
 * Add your adapter
 ```ruby 
@@ -52,7 +52,7 @@ sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite', :
 
 To use MySQL:
 
-* Install the mysql gem
+* Install the <a href="https://rubygems.org/gems/mysql">mysql</a> gem
 
 * Add your adapter
 ```ruby 
@@ -61,7 +61,7 @@ sequel_adapter =  ::Persistence::Adapter::Sequel.new( :adapter => 'mysql', :data
 
 To use MySQL2:
 
-* Install the mysql2 gem
+* Install the <a href="https://rubygems.org/gems/mysql2">mysql2</a> gem
 
 * Add your adapter
 ```ruby 
@@ -70,7 +70,7 @@ sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'mysql2', :data
 
 To use PostgreSQl:
 
-* Install the pg gem
+* Install the <a href="https://rubygems.org/gems/pg">pg</a> gem
 
 * Add your adapter
 ```ruby 
@@ -79,7 +79,7 @@ sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'postgres', :da
 
 To use SQLite:
 
-* Install the sqlite3 gem (Older gems not tested)
+* Install the <a href="https://rubygems.org/gems/sqlite3">sqlite3</a> gem (Older gems not tested)
 
 * Add your adapter
 ```ruby 
@@ -88,7 +88,9 @@ sequel_adapter = ::Persistence::Adapter::Sequel.new( :adapter => 'sqlite', :data
 
 To use Swift:
 
-* Install a Swift gem (e.g. swift-db-sqlite3)
+* Install the <a href="https://rubygems.org/gems/swift">swift</a> gem
+
+* Install a Swift gem (e.g. <a href="https://rubygems.org/gems/swift-db-sqlite3">swift-db-sqlite3</a>)
 
 * Add your adapter
 ```ruby 
