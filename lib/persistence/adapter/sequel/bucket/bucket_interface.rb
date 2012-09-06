@@ -176,10 +176,10 @@ module ::Persistence::Adapter::Sequel::Bucket::BucketInterface
   
   def put_attribute!(object, attribute_name, value )
   
-  	if @database__bucket.where(:global_id => object.persistence_id, :key => attribute_name.to_s)
-  		@database__bucket.insert(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
+  	if @database__bucket.where(:global_id => object.persistence_id, :key => attribute_name.to_s).get(:value)
+  		@database__bucket.update(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
     else
-    	@database__bucket.update(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
+    	@database__bucket.insert(:global_id => object.persistence_id, :key => attribute_name.to_s, :value => Marshal::dump(value))
     end
   end
 
