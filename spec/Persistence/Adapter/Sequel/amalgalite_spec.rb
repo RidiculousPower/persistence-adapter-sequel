@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite')
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'amalgalite', :database => '/tmp/amalgalite')
 
   
   # adapter spec
