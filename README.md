@@ -39,7 +39,7 @@ At this point the list of tested sub adapters are:
 * SQLite
 * Swift
 
-In theory all Sequel adapters should work within Persistence but as of yet not all have been tested.
+In_theory_all_Sequel_adapters_should_work_within_Persistence_but_as_of_yet_not_all_have_been_tested.
 
 To use Amalgalite:
 
