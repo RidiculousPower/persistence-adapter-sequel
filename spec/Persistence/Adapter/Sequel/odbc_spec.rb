@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'odbc')
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'odbc', :driver => 'mydb', :user => "root", :database => 'testing')
 
   
   # adapter spec

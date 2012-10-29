@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'do')
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'do', :url => 'sqlite3:/tmp/test')
 
   
   # adapter spec

@@ -5,7 +5,7 @@ describe ::Persistence::Adapter::Sequel do
 
 
   
-  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'tinytds')
+  $__persistence__spec__adapter__ = ::Persistence::Adapter::Sequel.new( :adapter => 'tinytds', :user => 'some_users', :host => 'some_host')
 
   
   # adapter spec

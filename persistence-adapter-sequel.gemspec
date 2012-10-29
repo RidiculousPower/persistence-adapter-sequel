@@ -1,27 +1,30 @@
+require 'date'
 
-# -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
- 
-require "persistence/adapter/sequel/version"
- 
-Gem::Specification.new do |s|
-  s.name        = "persistence-adapter-sequel"
-  s.version     = Persistence::Adapter::Sequel::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Conner M-Toups"]
-  s.email       = ["cmtoups@me.com"]
-  s.homepage    = "https://github.com/CMToups/persistence-adapter-sequel"
-  s.summary     = "An adapter that uses the Sequel gem (a wrapper for relational databases) as a storage port for Persistence."
-  s.description = "Implements necessary methods to run Persistence on top of the Sequel gem."
+Gem::Specification.new do |spec|
 
- #s.rubyforge_project = "persistence-adapter-sequel"
- 
-  s.add_dependency "persistence"
-  s.add_dependency "sequel" 
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "gem-release"
- 
-  s.files        = Dir.glob("{bin,lib}/**/*") + %w(README.md CHANGELOG.rdoc)
-  s.require_path = 'lib'
+  spec.name                      =  'persistence-adapter-sequel'
+  spec.rubyforge_project         =  'persistence-adapter-sequel'
+  spec.version                   =  '0.0.3'
+
+  spec.summary                   =  "Adapter to use the Sequel Gem as a storage port for Persistence."
+  spec.description               =  "Implements necessary methods to run Persistence on top of a SQL database."
+  
+  spec.authors                   =  [ 'Asher' ]
+  spec.email                     =  'asher@ridiculouspower.com'
+  spec.homepage                  =  'http://rubygems.org/gems/persistence-adapter-flat_file'
+  
+  spec.required_ruby_version     = ">= 1.9.1"
+  
+  spec.add_dependency            	'persistence'
+  spec.add_dependency 						'sequel'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'gem-release'
+  
+  spec.date                      = Date.today.to_s
+  
+  spec.files                     = Dir[ '{lib,spec}/**/*',
+                                        'README*', 
+                                        'LICENSE*',
+                                        'CHANGELOG*' ]
+
 end
